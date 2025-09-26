@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Repositories\PostRepository;
+use App\Repositories\CommentRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Interfaces\PostRepositoryInterface;
+use App\Interfaces\CommentRepositoryInterface;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
+        $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
     }
 
     /**
