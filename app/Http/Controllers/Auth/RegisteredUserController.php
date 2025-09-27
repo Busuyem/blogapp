@@ -19,6 +19,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+
     public function store(Request $request): JsonResponse
     {
         $request->validate([
@@ -35,11 +36,14 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // 🔑 create API token
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        // return response()->noContent();
         return response()->json([
             'user' => $user,
+            'token' => $token,
         ]);
     }
+
+
 }

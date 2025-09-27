@@ -69,19 +69,20 @@ class PostController extends Controller
         }
     }
 
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
         try {
-            if (Gate::denies('update', $post)) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+            $post = $this->postRepository->getById((int) $id); // 👈 cast here
+            if (!$post) {
+                return response()->json(['error' => 'Post not found'], 404);
             }
-            
-            if ($post->user_id !== Auth::id()) {
+
+            if (Gate::denies('update', $post) || $post->user_id !== Auth::id()) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
             $validator = Validator::make($request->all(), [
-                'title' => 'required|string|max:255',
+                'title'   => 'required|string|max:255',
                 'content' => 'required|string',
             ]);
 
@@ -91,9 +92,15 @@ class PostController extends Controller
 
             $this->postRepository->update($post, $request->only(['title', 'content']));
 
-            return response()->json(['message' => 'Post updated successfully', "post" => $post], 200);
+            return response()->json([
+                'message' => 'Post updated successfully',
+                'post'    => $post->fresh(['user:id,name,email'])
+            ], 200);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to update post', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'error'   => 'Failed to update post',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -101,7 +108,7 @@ class PostController extends Controller
     {
         try {
            
-             if (Gate::denies('delete', $post)) {
+            if (Gate::denies('delete', $post)) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 

@@ -33,22 +33,28 @@ class CommentController extends Controller
             }
 
             $post = Post::find($postId);
-
             if (!$post) {
                 return response()->json(['error' => 'Post not found'], 404);
             }
 
             $comment = $this->commentRepository->create([
                 'post_id' => $post->id,
-                'user_id' => Auth::check() ? Auth::id() : null, // allow guests
+                'user_id' => Auth::check() ? Auth::id() : null,
                 'comment' => $request->comment,
             ]);
 
+            // ensure the `user` relationship is loaded
+            $comment->load('user');
+
             return response()->json($comment, 201);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to add comment', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Failed to add comment',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function destroy(Comment $comment)
     {
