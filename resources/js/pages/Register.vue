@@ -13,53 +13,55 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const password_confirmation = ref('');
-const error = ref(null);
-const router = useRouter();
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const password_confirmation = ref('')
+const error = ref(null)
+const router = useRouter()
+const auth = useAuthStore() 
 
 async function submitRegister() {
-  error.value = null;
+  error.value = null
   try {
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      password_confirmation: password_confirmation.value
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        password_confirmation: password_confirmation.value
+      })
     })
-  });
 
-  const data = await res.json();
+    const data = await res.json()
 
-  if (!res.ok) {
-    const message = data.message ||
-      (data.errors ? Object.values(data.errors).flat().join(', ') : 'Registration failed');
-    throw new Error(message);
-  }
+    if (!res.ok) {
+      const message = data.message ||
+        (data.errors ? Object.values(data.errors).flat().join(', ') : 'Registration failed')
+      throw new Error(message)
+    }
 
-  if (data.token) {
-    localStorage.setItem('token', data.token);
-  }
+    // Update store + localStorage
+    if (data.token && data.user) {
+      auth.setAuth(data.token, data.user)
+    }
 
-  // redirect
-  router.push('/');
-
+    router.push('/')
   } catch (err) {
-    error.value = err.message;
+    error.value = err.message
   }
 }
 </script>
+
 
 
 <style scoped>

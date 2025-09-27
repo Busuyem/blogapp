@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Import pages
 import PostList from './pages/PostList.vue';
 import PostDetail from './pages/PostDetail.vue';
 import NewPost from './pages/NewPost.vue';

@@ -51,7 +51,6 @@ async function submitNewPost() {
     }
 
     success.value = 'Post created successfully!';
-    // Redirect to the newly created post
     router.push(`/posts/${data.id}`);
   } catch (err) {
     error.value = err.message;

@@ -11,16 +11,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
-const email = ref('');
-const password = ref('');
-const error = ref(null);
-const router = useRouter();
+const email = ref('')
+const password = ref('')
+const error = ref(null)
+const router = useRouter()
+const auth = useAuthStore()
 
 async function submitLogin() {
-  error.value = null;
+  error.value = null
   try {
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login`, {
       method: 'POST',
@@ -32,33 +34,26 @@ async function submitLogin() {
         email: email.value, 
         password: password.value 
       })
-    });
+    })
 
-    const data = await res.json();
+    const data = await res.json()
 
     if (!res.ok) {
-      throw new Error(data.message || 'Login failed');
+      throw new Error(data.message || 'Login failed')
     }
 
-    // ✅ Save token
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-    }
-
-    // ✅ Save user info
-    if (data.user) {
-      localStorage.setItem('user_id', data.user.id);
-      localStorage.setItem('user_name', data.user.name);
+    // Save auth data via store (reactive)
+    if (data.user && data.token) {
+      auth.setAuth(data.user, data.token)
     }
 
     // Redirect to home
-    router.push('/');
+    router.push('/')
   } catch (err) {
-    error.value = err.message;
+    error.value = err.message
   }
 }
 </script>
-
 
 <style scoped>
 .auth-card {

@@ -141,7 +141,7 @@ async function submitComment() {
 
     const comment = await res.json();
 
-    // normalize newly created comment (backend should return user)
+
     const normalized = {
       ...comment,
       user: comment.user ? { id: Number(comment.user.id), name: comment.user.name } : { id: Number(comment.user_id || currentUserId), name: currentUserName || 'You' }
