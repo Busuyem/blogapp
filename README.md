@@ -25,7 +25,7 @@ A full-stack blog application built with **Laravel** (backend) and **Vue.js** (f
 
 ---
 
-## Getting Started
+
 
 ### 1. Clone the repository
 
@@ -34,8 +34,9 @@ git clone https://github.com/Busuyem/blogapp
 cd blogapp
 
 
-2. Copy .env and configure
+### 2. Copy .env and configure
 
+```bash
 cp .env.example .env
 
 
@@ -49,8 +50,9 @@ DB_DATABASE=blog
 DB_USERNAME=root
 DB_PASSWORD=root
 
-3. Build and run Docker containers
+### 3. Build and run Docker containers
 
+```bash
 docker-compose up -d --build
 
 Containers started:
@@ -61,8 +63,9 @@ laravel_web: Nginx web server
 
 mysql_db: MySQL database
 
-4. Install dependencies inside container
+### 4. Install dependencies inside container
 
+```bash
 docker exec -it laravel_app bash
 composer install
 npm install
@@ -70,9 +73,21 @@ npm run build
 exit
 
 
-5. Migrate and seed the database
+### 5. Migrate and seed the database
 
+```bash
 docker exec -it laravel_app bash
 php artisan migrate --seed
 exit
 
+### 6. Access the app
+
+```bash
+Open in browser: http://localhost:8000
+
+
+### 7. Authentication
+
+Register a new user or login with seeded users
+
+After login, you can create posts, comment, and delete/edit posts you own.
